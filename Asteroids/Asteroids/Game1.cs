@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Asteroids
 {
@@ -11,6 +12,10 @@ namespace Asteroids
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        List<Bullet> bullets;
+        List<Asteroid> asteroids;
+        Ship ship;
+        BulletManager bm;
 
         public Game1()
         {
@@ -27,6 +32,8 @@ namespace Asteroids
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+            bullets = new List<Bullet>();
+            asteroids = new List<Asteroid>();
 
             base.Initialize();
         }
@@ -41,6 +48,8 @@ namespace Asteroids
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
+            bm = new BulletManager(Content.Load<Texture2D>(@"Bolt"));
+            ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm);
         }
 
         /// <summary>
@@ -63,6 +72,8 @@ namespace Asteroids
                 Exit();
 
             // TODO: Add your update logic here
+            ship.Update();
+            bm.Update();
 
             base.Update(gameTime);
         }
@@ -76,7 +87,12 @@ namespace Asteroids
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
 
+            ship.Draw(spriteBatch);
+            bm.Draw(spriteBatch);
+
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
