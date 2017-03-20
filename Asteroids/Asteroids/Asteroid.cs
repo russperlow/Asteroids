@@ -14,9 +14,17 @@ namespace Asteroids
     {
         // FIELDS
         Texture2D texture;
-        bool split;
+        bool split, active;
         Vector2 position, velocity;
         
+        // PROPERTIES
+        public Rectangle Rect { get { return new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height); } }
+        public bool Active { get { return active; } set { active = false; } }
+        public bool Split { get { return split; } }
+        public Texture2D Texture { get { return texture; } }
+        public Vector2 Position { get { return position; } }
+        public Vector2 Velocity { get { return velocity; } }
+
         /// <summary>
         /// Constuctor
         /// </summary>
@@ -30,6 +38,7 @@ namespace Asteroids
             this.position = position;
             this.velocity = velocity;
             this.split = split;
+            active = true;
         }
 
         // METHODS

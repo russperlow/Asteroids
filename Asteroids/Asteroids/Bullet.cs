@@ -18,7 +18,8 @@ namespace Asteroids
 
         // PROPERTIES
         public bool Active { get { return active; } set { active = value; } }
-        
+        public Vector2 Position { get { return position; } }
+        public Rectangle Rect { get { return new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height); } }
         /// <summary>
         /// Constructor
         /// </summary>

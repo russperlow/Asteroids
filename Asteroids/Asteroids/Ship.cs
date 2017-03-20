@@ -22,7 +22,10 @@ namespace Asteroids
 
         // PROPERTIES
         public Vector2 Position { get { return position; } }
+        public Rectangle Rect { get { return new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height); } }
         public int Lives { get { return lives; } set { lives = value; } }
+
+
         /// <summary>
         /// Constructor
         /// </summary>

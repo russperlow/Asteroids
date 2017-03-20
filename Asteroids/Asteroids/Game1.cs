@@ -45,8 +45,8 @@ namespace Asteroids
 
             // TODO: use this.Content to load your game content here
             bm = new BulletManager(Content.Load<Texture2D>(@"Bolt"));
-            am = new AsteroidManager(Content, GraphicsDevice.Viewport);
             ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm);
+            am = new AsteroidManager(Content, GraphicsDevice.Viewport, bm, ship);
         }
 
         /// <summary>

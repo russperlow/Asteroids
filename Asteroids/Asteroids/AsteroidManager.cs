@@ -18,14 +18,19 @@ namespace Asteroids
         float timer;
         Random rand;
         Viewport viewport;
+        BulletManager bm;
+        Ship ship;
+
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="Content">ContentManager object</param>
         /// <param name="viewport">Viewport object</param>
-        public AsteroidManager(ContentManager Content, Viewport viewport)
+        public AsteroidManager(ContentManager Content, Viewport viewport, BulletManager bm, Ship ship)
         {
             this.viewport = viewport;
+            this.bm = bm;
+            this.ship = ship;
             textures = new List<Texture2D>() { Content.Load<Texture2D>(@"Route66"), Content.Load<Texture2D>(@"Rusteze"), Content.Load<Texture2D>(@"PistonCup") };
             asteroids = new List<Asteroid>();
             rand = new Random();
@@ -44,10 +49,18 @@ namespace Asteroids
         /// <param name="gameTime">GameTime object</param>
         public void Update(GameTime gameTime)
         {
+            timer += gameTime.ElapsedGameTime.Milliseconds;
+            if(timer > 1500)
+            {
+                CreateAsteroid();
+                timer = 0;
+            }
+
             foreach(Asteroid a in asteroids)
             {
                 a.Update();
             }
+            CollisionCheck();
         }
 
         /// <summary>
@@ -82,6 +95,39 @@ namespace Asteroids
                 case 3:
                     asteroids.Add(new Asteroid(textures[rand.Next(3)], new Vector2(rand.Next(viewport.Width), viewport.Height), new Vector2(-(float)rand.NextDouble(), -(float)rand.NextDouble()), false));
                     break;
+            }
+        }
+
+
+        /// <summary>
+        /// Check asteroid collision with bullets and the player
+        /// </summary>
+        public void CollisionCheck()
+        {
+            for(int i = 0; i < asteroids.Count; i++)
+            {
+                // Handle player collision
+                if (asteroids[i].Rect.Intersects(ship.Rect))
+                {
+                    ship.Lives--;
+                }
+
+                // Handle bullet collision
+                foreach (Bullet b in bm.BulletList)
+                {
+                    if (asteroids[i].Rect.Intersects(b.Rect) && b.Active)
+                    {
+                        b.Active = false;
+                        // If it is a large asteroid split it
+                        if (!asteroids[i].Split)
+                        {
+                            asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X + .1f, asteroids[i].Velocity.Y + .1f), true));
+                            asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X - .1f, asteroids[i].Velocity.Y - .1f), true));
+                        }
+                        asteroids.Remove(asteroids[i]);
+                        break;
+                    }
+                }
             }
         }
     }

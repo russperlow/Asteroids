@@ -17,6 +17,9 @@ namespace Asteroids
         Texture2D bulletText;
         float timer; // used to measure time between shots
 
+        // PROPERTIES
+        public List<Bullet> BulletList { get { return bulletList; } set { bulletList = value; } }
+
         /// <summary>
         /// Constuctor
         /// </summary>
@@ -76,5 +79,6 @@ namespace Asteroids
                 timer = 0;
             }
         }
+
     }
 }
