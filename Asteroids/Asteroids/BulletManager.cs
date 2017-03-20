@@ -15,6 +15,8 @@ namespace Asteroids
         // FIELDS
         List<Bullet> bulletList;
         Texture2D bulletText;
+        float timer; // used to measure time between shots
+
         /// <summary>
         /// Constuctor
         /// </summary>
@@ -64,9 +66,15 @@ namespace Asteroids
         /// <param name="position">The bullet's starting position</param>
         /// <param name="velocity">The bullet's directional velocity</param>
         /// <param name="rotation">The bullet's rotation</param>
-        public void AddBullet(Vector2 position, Vector2 velocity, float rotation)
+        /// <param name="gameTime">A GameTime object</param>
+        public void AddBullet(Vector2 position, Vector2 velocity, float rotation, GameTime gameTime)
         {
-            bulletList.Add(new Bullet(bulletText, position, velocity, rotation));
+            timer += gameTime.ElapsedGameTime.Milliseconds;
+            if (timer > 350)
+            {
+                bulletList.Add(new Bullet(bulletText, position, velocity, rotation));
+                timer = 0;
+            }
         }
     }
 }

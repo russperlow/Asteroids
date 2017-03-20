@@ -18,10 +18,11 @@ namespace Asteroids
         Viewport viewport;
         BulletManager bm;
         const int MAX_SPEED = 10;
+        int lives;
 
         // PROPERTIES
         public Vector2 Position { get { return position; } }
-
+        public int Lives { get { return lives; } set { lives = value; } }
         /// <summary>
         /// Constructor
         /// </summary>
@@ -35,6 +36,7 @@ namespace Asteroids
             position = new Vector2(viewport.Width / 2, viewport.Height / 2);
             speed = 0;
             rotation = 0;
+            lives = 3;
         }
         
         // METHODS
@@ -42,7 +44,7 @@ namespace Asteroids
         /// <summary>
         /// Updates the spaceships properties
         /// </summary>
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             kbState = Keyboard.GetState();
             Wrap();
@@ -80,11 +82,12 @@ namespace Asteroids
 
             position += new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)) * speed;
 
+            // Shoot a bullet
             if (kbState.IsKeyDown(Keys.Space))
             {
                 Vector2 direction = position;
                 direction.Normalize();
-                bm.AddBullet(position, direction, rotation);
+                bm.AddBullet(position, new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)), rotation, gameTime);
             }
 
         }
@@ -95,7 +98,13 @@ namespace Asteroids
         /// <param name="spriteBatch">SpriteBatch object to allow for drawing</param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, null, Color.White, rotation, new Vector2(texture.Width / 2, texture.Height / 2), 1f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(texture, position, null, Color.White, rotation, new Vector2(texture.Width / 2, texture.Height / 2), .75f, SpriteEffects.None, 1f);
+
+            // Draw the lives remaining 
+            for(int i = 0; i < lives; i++)
+            {
+                spriteBatch.Draw(texture, new Rectangle(i * texture.Width / 2, 0, texture.Width / 2, texture.Height / 2), Color.White);
+            }
         }
 
         /// <summary>

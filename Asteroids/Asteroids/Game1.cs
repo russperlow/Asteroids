@@ -12,11 +12,9 @@ namespace Asteroids
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        List<Bullet> bullets;
-        List<Asteroid> asteroids;
         Ship ship;
         BulletManager bm;
-
+        AsteroidManager am;
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -32,8 +30,6 @@ namespace Asteroids
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            bullets = new List<Bullet>();
-            asteroids = new List<Asteroid>();
 
             base.Initialize();
         }
@@ -49,6 +45,7 @@ namespace Asteroids
 
             // TODO: use this.Content to load your game content here
             bm = new BulletManager(Content.Load<Texture2D>(@"Bolt"));
+            am = new AsteroidManager(Content, GraphicsDevice.Viewport);
             ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm);
         }
 
@@ -72,8 +69,9 @@ namespace Asteroids
                 Exit();
 
             // TODO: Add your update logic here
-            ship.Update();
             bm.Update();
+            am.Update(gameTime);
+            ship.Update(gameTime);
 
             base.Update(gameTime);
         }
@@ -89,8 +87,9 @@ namespace Asteroids
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
-            ship.Draw(spriteBatch);
             bm.Draw(spriteBatch);
+            am.Draw(spriteBatch);
+            ship.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
