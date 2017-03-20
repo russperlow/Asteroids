@@ -1,6 +1,7 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 
 namespace Asteroids
@@ -44,8 +45,8 @@ namespace Asteroids
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
             // TODO: use this.Content to load your game content here
-            bm = new BulletManager(Content.Load<Texture2D>(@"Bolt"));
-            ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm);
+            bm = new BulletManager(Content.Load<Texture2D>(@"Bolt"), Content.Load<SoundEffect>(@"Kachow"));
+            ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm, Content.Load<SpriteFont>(@"Font"));
             am = new AsteroidManager(Content, GraphicsDevice.Viewport, bm, ship);
         }
 

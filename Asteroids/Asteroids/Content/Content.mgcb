@@ -73,3 +73,15 @@
 /processorParam:TextureFormat=Color
 /build:Route66.png
 
+#begin Kachow.mp3
+/importer:Mp3Importer
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Kachow.mp3
+
+#begin Font.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:TextureFormat=Compressed
+/build:Font.spritefont
+

@@ -17,29 +17,33 @@ namespace Asteroids
         KeyboardState kbState;
         Viewport viewport;
         BulletManager bm;
+        SpriteFont font;
         const int MAX_SPEED = 10;
         int lives;
+        int score;
 
         // PROPERTIES
-        public Vector2 Position { get { return position; } }
+        public Vector2 Position { get { return position; } set { position = value; } }
         public Rectangle Rect { get { return new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height); } }
         public int Lives { get { return lives; } set { lives = value; } }
-
+        public int Score { get { return score; } set { score = value; } }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="texture">The ships texture</param>
         /// <param name="viewport">Gives dimensons to help with wrapping</param>
-        public Ship(Texture2D texture, Viewport viewport, BulletManager bm)
+        public Ship(Texture2D texture, Viewport viewport, BulletManager bm, SpriteFont font)
         {
             this.texture = texture;
             this.viewport = viewport;
             this.bm = bm;
+            this.font = font;
             position = new Vector2(viewport.Width / 2, viewport.Height / 2);
             speed = 0;
             rotation = 0;
             lives = 3;
+            score = 0;
         }
         
         // METHODS
@@ -57,12 +61,6 @@ namespace Asteroids
             {
                 if(speed < MAX_SPEED)
                     speed += .05f;
-                
-            }
-            else if(kbState.IsKeyDown(Keys.S) || kbState.IsKeyDown(Keys.Down))
-            {
-                if(speed > -MAX_SPEED)
-                    speed -= .05f;
                 
             }
             else
@@ -108,6 +106,9 @@ namespace Asteroids
             {
                 spriteBatch.Draw(texture, new Rectangle(i * texture.Width / 2, 0, texture.Width / 2, texture.Height / 2), Color.White);
             }
+
+            // Draw the score
+            spriteBatch.DrawString(font, "Score: " + score, new Vector2(0, texture.Height * 3 / 4), Color.White);
         }
 
         /// <summary>

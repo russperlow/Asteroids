@@ -109,7 +109,8 @@ namespace Asteroids
                 // Handle player collision
                 if (asteroids[i].Rect.Intersects(ship.Rect))
                 {
-                    ship.Lives--;
+                    Reset();
+                    break;
                 }
 
                 // Handle bullet collision
@@ -123,10 +124,39 @@ namespace Asteroids
                         {
                             asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X + .1f, asteroids[i].Velocity.Y + .1f), true));
                             asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X - .1f, asteroids[i].Velocity.Y - .1f), true));
+                            ship.Score += 20;
+                        }
+                        else
+                        {
+                            ship.Score += 50;
                         }
                         asteroids.Remove(asteroids[i]);
                         break;
                     }
+                }
+            }
+        }
+
+        /// <summary>
+        /// If a player collides with an asteroid reset the game
+        /// </summary>
+        public void Reset()
+        {
+            if (ship.Lives > 0)
+            {
+                // Clear everything
+                asteroids.Clear();
+                bm.BulletList.Clear();
+
+                // Move the player back to the center and remove a life
+                ship.Position = new Vector2(viewport.Width / 2, viewport.Height / 2);
+                ship.Lives--;
+
+                // Create new asteroids
+                int temp = rand.Next(10, 15);
+                for (int i = 0; i < temp; i++)
+                {
+                    CreateAsteroid();
                 }
             }
         }

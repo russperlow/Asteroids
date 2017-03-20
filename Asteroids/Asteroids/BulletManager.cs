@@ -1,8 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using Microsoft.Xna.Framework.Content;
-using System;
+using Microsoft.Xna.Framework.Audio;
 using System.Collections.Generic;
 
 namespace Asteroids
@@ -15,6 +13,8 @@ namespace Asteroids
         // FIELDS
         List<Bullet> bulletList;
         Texture2D bulletText;
+        SoundEffect kachow;
+        SoundEffectInstance sei;
         float timer; // used to measure time between shots
 
         // PROPERTIES
@@ -24,9 +24,14 @@ namespace Asteroids
         /// Constuctor
         /// </summary>
         /// <param name="bulletText">Bullet's texture</param>
-        public BulletManager(Texture2D bulletText)
+        public BulletManager(Texture2D bulletText, SoundEffect kachow)
         {
             this.bulletText = bulletText;
+            this.kachow = kachow;
+            sei = kachow.CreateInstance();
+            sei.Volume = .5f;
+            sei.Pan = 0f;
+            sei.Pitch = 0f;
             bulletList = new List<Bullet>();
         }
 
@@ -77,6 +82,9 @@ namespace Asteroids
             {
                 bulletList.Add(new Bullet(bulletText, position, velocity, rotation));
                 timer = 0;
+                // Play a sound effect when shooting if not already playing
+                if (sei.State != SoundState.Playing)
+                    sei.Play();
             }
         }
 
