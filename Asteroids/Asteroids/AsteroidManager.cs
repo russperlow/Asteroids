@@ -13,6 +13,7 @@ namespace Asteroids
     class AsteroidManager
     {
         // FIELDS
+        const int OFF_SCREEN_DIST = 1000;
         List<Texture2D> textures;
         List<Asteroid> asteroids;
         float timer;
@@ -50,7 +51,7 @@ namespace Asteroids
         public void Update(GameTime gameTime)
         {
             timer += gameTime.ElapsedGameTime.Milliseconds;
-            if(timer > 1500)
+            if(timer > 1000)
             {
                 CreateAsteroid();
                 timer = 0;
@@ -109,14 +110,14 @@ namespace Asteroids
             {
 
                 // Checks to see if asteroid is far off screen
-                if (asteroids[i].Position.X < -100 || asteroids[i].Position.Y < -1 || asteroids[i].Position.X > viewport.Width + 100 || asteroids[i].Position.Y > viewport.Height + 100)
+                if (asteroids[i].Position.X < -OFF_SCREEN_DIST || asteroids[i].Position.Y < -OFF_SCREEN_DIST || asteroids[i].Position.X > viewport.Width + OFF_SCREEN_DIST || asteroids[i].Position.Y > viewport.Height + OFF_SCREEN_DIST)
                 {
                     asteroids.Remove(asteroids[i]);
                     break;
                 }
 
                 // Handle player collision
-                if (asteroids[i].Rect.Intersects(ship.Rect))
+                if (asteroids[i].Rect.Intersects(ship.Rect) && !ship.Invincible)
                 {
                     Reset();
                     break;
@@ -126,7 +127,7 @@ namespace Asteroids
                 foreach (Bullet b in bm.BulletList)
                 {
                     // Checks to see if bullet is even on screen
-                    if (b.Position.X < -100 || b.Position.Y < -1 || b.Position.X > viewport.Width + 100 || b.Position.Y > viewport.Height + 100)
+                    if (b.Position.X < -OFF_SCREEN_DIST || b.Position.Y < -OFF_SCREEN_DIST || b.Position.X > viewport.Width + OFF_SCREEN_DIST || b.Position.Y > viewport.Height + OFF_SCREEN_DIST)
                     {
                         b.Active = false;
                         break;
@@ -138,8 +139,8 @@ namespace Asteroids
                         // If it is a large asteroid split it
                         if (!asteroids[i].Split)
                         {
-                            asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X + .1f, asteroids[i].Velocity.Y + .1f), true));
-                            asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X - .1f, asteroids[i].Velocity.Y - .1f), true));
+                            asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X + (float)rand.NextDouble(), asteroids[i].Velocity.Y + (float)rand.NextDouble()), true));
+                            asteroids.Add(new Asteroid(asteroids[i].Texture, asteroids[i].Position, new Vector2(asteroids[i].Velocity.X - (float)rand.NextDouble(), asteroids[i].Velocity.Y - (float)rand.NextDouble()), true));
                             ship.Score += 20;
                         }
                         else

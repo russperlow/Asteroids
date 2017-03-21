@@ -57,7 +57,7 @@ namespace Asteroids
             font = Content.Load<SpriteFont>(@"Font");
             // TODO: use this.Content to load your game content here
             bm = new BulletManager(Content.Load<Texture2D>(@"Bolt"), Content.Load<SoundEffect>(@"Kachow"));
-            ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm, font);
+            ship = new Ship(Content.Load<Texture2D>(@"McQueen"), Content.Load<Texture2D>(@"McQueenBlue"), GraphicsDevice.Viewport, bm, font);
             am = new AsteroidManager(Content, GraphicsDevice.Viewport, bm, ship);
             background = Content.Load<Texture2D>(@"Radiator_Springs");
         }
@@ -90,7 +90,7 @@ namespace Asteroids
                         currState = GameStates.GamePlaying;
                     break;
                 case GameStates.GamePlaying:
-                    bm.Update();
+                    bm.Update(gameTime);
                     am.Update(gameTime);
                     ship.Update(gameTime, kbState);
                     if (ship.Lives <= 0)

@@ -15,6 +15,7 @@ namespace Asteroids
         Texture2D texture;
         float speed, rotation;
         bool active;
+        Color color;
 
         // PROPERTIES
         public bool Active { get { return active; } set { active = value; } }
@@ -26,12 +27,13 @@ namespace Asteroids
         /// <param name="texture">The bullet texture</param>
         /// <param name="position">Its starting position</param>
         /// <param name="velocity">The direction it's moving in</param>
-        public Bullet(Texture2D texture, Vector2 position, Vector2 velocity, float rotation)
+        public Bullet(Texture2D texture, Vector2 position, Vector2 velocity, float rotation, Color color)
         {
             this.texture = texture;
             this.position = position;
             this.velocity = velocity;
             this.rotation = rotation;
+            this.color = color;
             speed = 1f;
             active = true;
         }
@@ -52,7 +54,7 @@ namespace Asteroids
         /// <param name="spriteBatch">SpriteBatch object</param>
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, position, null, Color.White, rotation, Vector2.Zero, 1f, SpriteEffects.None, 1f);
+            spriteBatch.Draw(texture, position, null, color, rotation, Vector2.Zero, 1f, SpriteEffects.None, 1f);
         }
 
     }

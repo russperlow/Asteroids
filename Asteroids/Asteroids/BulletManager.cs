@@ -40,7 +40,7 @@ namespace Asteroids
         /// <summary>
         /// Update all the bullets
         /// </summary>
-        public void Update()
+        public void Update(GameTime gameTime)
         {
             for(int i = 0; i < bulletList.Count; i++)
             {
@@ -54,6 +54,8 @@ namespace Asteroids
                     bulletList.Remove(bulletList[i]);
                 }
             }
+            timer += gameTime.ElapsedGameTime.Milliseconds;
+
         }
 
         /// <summary>
@@ -74,13 +76,12 @@ namespace Asteroids
         /// <param name="position">The bullet's starting position</param>
         /// <param name="velocity">The bullet's directional velocity</param>
         /// <param name="rotation">The bullet's rotation</param>
-        /// <param name="gameTime">A GameTime object</param>
-        public void AddBullet(Vector2 position, Vector2 velocity, float rotation, GameTime gameTime)
+        /// <param name="color">The bullet's color</param>
+        public void AddBullet(Vector2 position, Vector2 velocity, float rotation, Color color)
         {
-            timer += gameTime.ElapsedGameTime.Milliseconds;
             if (timer > 350)
             {
-                bulletList.Add(new Bullet(bulletText, position, velocity, rotation));
+                bulletList.Add(new Bullet(bulletText, position, velocity, rotation, color));
                 timer = 0;
                 // Play a sound effect when shooting if not already playing
                 if (sei.State != SoundState.Playing)

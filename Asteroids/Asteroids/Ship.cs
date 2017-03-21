@@ -11,38 +11,46 @@ namespace Asteroids
     class Ship
     {
         // FIELDS
-        float rotation, speed;
+        const int MAX_SPEED = 10;
+        const int FULL_RECHARGE = 1000;
         Vector2 position;
-        Texture2D texture;
+        Texture2D texture, blueText, redText;
         Viewport viewport;
         BulletManager bm;
         SpriteFont font;
-        const int MAX_SPEED = 10;
-        int lives;
-        int score;
+        float rotation, speed, recharge;
+        int lives, score;
+        bool invincible;
 
         // PROPERTIES
         public Vector2 Position { get { return position; } set { position = value; } }
         public Rectangle Rect { get { return new Rectangle((int)position.X, (int)position.Y, texture.Width, texture.Height); } }
         public int Lives { get { return lives; } set { lives = value; } }
         public int Score { get { return score; } set { score = value; } }
+        public bool Invincible { get { return invincible; } }
 
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="texture">The ships texture</param>
         /// <param name="viewport">Gives dimensons to help with wrapping</param>
-        public Ship(Texture2D texture, Viewport viewport, BulletManager bm, SpriteFont font)
+        public Ship(Texture2D redText, Texture2D blueText, Viewport viewport, BulletManager bm, SpriteFont font)
         {
-            this.texture = texture;
+            // Set all constructor params
+            this.redText = redText;
+            this.blueText = blueText;
             this.viewport = viewport;
             this.bm = bm;
             this.font = font;
+            
+            // Init variables 
             position = new Vector2(viewport.Width / 2, viewport.Height / 2);
             speed = 0;
             rotation = 0;
             lives = 3;
             score = 0;
+            texture = redText;
+            invincible = false;
         }
         
         // METHODS
@@ -59,7 +67,6 @@ namespace Asteroids
             {
                 if(speed < MAX_SPEED)
                     speed += .05f;
-                
             }
             else
             {
@@ -86,7 +93,42 @@ namespace Asteroids
             {
                 Vector2 direction = position;
                 direction.Normalize();
-                bm.AddBullet(position, new Vector2((float)Math.Cos(rotation) * 3, (float)Math.Sin(rotation) * 3), rotation, gameTime);
+
+                // Changes the bullet color to match the car
+                Color color = Color.White;
+                if (invincible)
+                    color = Color.Blue;
+
+                bm.AddBullet(position, new Vector2((float)Math.Cos(rotation) * (speed + 2), (float)Math.Sin(rotation) * (speed + 2)), rotation, color);
+            }
+
+            // Handles the invincible bonus recharging and usage
+            if (!invincible)
+            {
+                if (recharge == FULL_RECHARGE && kbState.IsKeyDown(Keys.R))
+                {
+                    invincible = true;
+                    texture = blueText;
+                }
+                else
+                {
+                    if (recharge > FULL_RECHARGE)
+                        recharge = FULL_RECHARGE;
+                    else
+                        recharge += gameTime.ElapsedGameTime.Milliseconds / 10;
+                }
+            }
+            else
+            {
+                if(recharge > 0)
+                {
+                    recharge -= 1f;
+                }
+                else
+                {
+                    invincible = false;
+                    texture = redText;
+                }
             }
 
         }
@@ -102,8 +144,11 @@ namespace Asteroids
             // Draw the lives remaining 
             for(int i = 0; i < lives; i++)
             {
-                spriteBatch.Draw(texture, new Rectangle(i * texture.Width / 2, 0, texture.Width / 2, texture.Height / 2), Color.White);
+                spriteBatch.Draw(redText, new Rectangle(i * texture.Width / 2, 0, texture.Width / 2, texture.Height / 2), Color.White);
             }
+
+            // Draw the recharging car
+            spriteBatch.Draw(blueText, new Rectangle(viewport.Width - blueText.Width, 0, (int)(texture.Width * (recharge / 1000)) / 2, texture.Height / 2), new Rectangle(0, 0, (int)(texture.Width * (recharge / 1000)), texture.Height), Color.White);
 
             // Draw the score
             spriteBatch.DrawString(font, "Score: " + score, new Vector2(0, texture.Height * 3 / 4), Color.White);
