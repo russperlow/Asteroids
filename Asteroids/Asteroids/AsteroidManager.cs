@@ -101,11 +101,20 @@ namespace Asteroids
 
         /// <summary>
         /// Check asteroid collision with bullets and the player
+        /// As well as if it is off the screen
         /// </summary>
         public void CollisionCheck()
         {
             for(int i = 0; i < asteroids.Count; i++)
             {
+
+                // Checks to see if asteroid is far off screen
+                if (asteroids[i].Position.X < -100 || asteroids[i].Position.Y < -1 || asteroids[i].Position.X > viewport.Width + 100 || asteroids[i].Position.Y > viewport.Height + 100)
+                {
+                    asteroids.Remove(asteroids[i]);
+                    break;
+                }
+
                 // Handle player collision
                 if (asteroids[i].Rect.Intersects(ship.Rect))
                 {
@@ -116,6 +125,13 @@ namespace Asteroids
                 // Handle bullet collision
                 foreach (Bullet b in bm.BulletList)
                 {
+                    // Checks to see if bullet is even on screen
+                    if (b.Position.X < -100 || b.Position.Y < -1 || b.Position.X > viewport.Width + 100 || b.Position.Y > viewport.Height + 100)
+                    {
+                        b.Active = false;
+                        break;
+                    }
+
                     if (asteroids[i].Rect.Intersects(b.Rect) && b.Active)
                     {
                         b.Active = false;
@@ -142,22 +158,19 @@ namespace Asteroids
         /// </summary>
         public void Reset()
         {
-            if (ship.Lives > 0)
+            // Clear everything
+            asteroids.Clear();
+            bm.BulletList.Clear();
+
+            // Move the player back to the center and remove a life
+            ship.Position = new Vector2(viewport.Width / 2, viewport.Height / 2);
+            ship.Lives--;
+
+            // Create new asteroids
+            int temp = rand.Next(10, 15);
+            for (int i = 0; i < temp; i++)
             {
-                // Clear everything
-                asteroids.Clear();
-                bm.BulletList.Clear();
-
-                // Move the player back to the center and remove a life
-                ship.Position = new Vector2(viewport.Width / 2, viewport.Height / 2);
-                ship.Lives--;
-
-                // Create new asteroids
-                int temp = rand.Next(10, 15);
-                for (int i = 0; i < temp; i++)
-                {
-                    CreateAsteroid();
-                }
+                CreateAsteroid();
             }
         }
     }

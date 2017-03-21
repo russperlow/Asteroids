@@ -6,6 +6,12 @@ using System.Collections.Generic;
 
 namespace Asteroids
 {
+    enum GameStates
+    {
+        MainMenu,
+        GamePlaying,
+        GameOver
+    }
     /// <summary>
     /// This is the main type for your game.
     /// </summary>
@@ -16,6 +22,11 @@ namespace Asteroids
         Ship ship;
         BulletManager bm;
         AsteroidManager am;
+        KeyboardState kbState;
+        SpriteFont font;
+        Texture2D background;
+        GameStates currState;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -31,7 +42,7 @@ namespace Asteroids
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
+            currState = GameStates.MainMenu;
             base.Initialize();
         }
 
@@ -43,11 +54,12 @@ namespace Asteroids
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-
+            font = Content.Load<SpriteFont>(@"Font");
             // TODO: use this.Content to load your game content here
             bm = new BulletManager(Content.Load<Texture2D>(@"Bolt"), Content.Load<SoundEffect>(@"Kachow"));
-            ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm, Content.Load<SpriteFont>(@"Font"));
+            ship = new Ship(Content.Load<Texture2D>(@"McQueen"), GraphicsDevice.Viewport, bm, font);
             am = new AsteroidManager(Content, GraphicsDevice.Viewport, bm, ship);
+            background = Content.Load<Texture2D>(@"Radiator_Springs");
         }
 
         /// <summary>
@@ -70,10 +82,29 @@ namespace Asteroids
                 Exit();
 
             // TODO: Add your update logic here
-            bm.Update();
-            am.Update(gameTime);
-            ship.Update(gameTime);
+            kbState = Keyboard.GetState();
 
+            switch (currState) {
+                case GameStates.MainMenu:
+                    if (kbState.IsKeyDown(Keys.Space))
+                        currState = GameStates.GamePlaying;
+                    break;
+                case GameStates.GamePlaying:
+                    bm.Update();
+                    am.Update(gameTime);
+                    ship.Update(gameTime, kbState);
+                    if (ship.Lives <= 0)
+                        currState = GameStates.GameOver;            
+                    break;
+                case GameStates.GameOver:
+                    if (kbState.IsKeyDown(Keys.Space))
+                    {
+                        currState = GameStates.MainMenu;
+                        am.Reset();
+                        ship.Reset();
+                    }
+                    break;
+            }
             base.Update(gameTime);
         }
 
@@ -87,11 +118,22 @@ namespace Asteroids
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            spriteBatch.Draw(background, new Rectangle(0, 0, GraphicsDevice.Viewport.Width, GraphicsDevice.Viewport.Height), Color.White);
 
-            bm.Draw(spriteBatch);
-            am.Draw(spriteBatch);
-            ship.Draw(spriteBatch);
-
+            switch (currState)
+            {
+                case GameStates.MainMenu:
+                    spriteBatch.DrawString(font, "Press Space to Play Game", new Vector2((GraphicsDevice.Viewport.Width / 2) - (font.MeasureString("Press Space to Play Game").Length() / 2), GraphicsDevice.Viewport.Height / 2), Color.White);
+                    break;
+                case GameStates.GamePlaying:
+                    bm.Draw(spriteBatch);
+                    am.Draw(spriteBatch);
+                    ship.Draw(spriteBatch);
+                    break;
+                case GameStates.GameOver:
+                    spriteBatch.DrawString(font, "Game Over! Final Score: " + ship.Score + "\nPress Space to Continue" , new Vector2((GraphicsDevice.Viewport.Width / 2) - (font.MeasureString("Game Over! Final Score: " + ship.Score).Length() / 2), GraphicsDevice.Viewport.Height / 2), Color.White);
+                    break;
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }

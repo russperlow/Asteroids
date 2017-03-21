@@ -14,7 +14,6 @@ namespace Asteroids
         float rotation, speed;
         Vector2 position;
         Texture2D texture;
-        KeyboardState kbState;
         Viewport viewport;
         BulletManager bm;
         SpriteFont font;
@@ -51,9 +50,8 @@ namespace Asteroids
         /// <summary>
         /// Updates the spaceships properties
         /// </summary>
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, KeyboardState kbState)
         {
-            kbState = Keyboard.GetState();
             Wrap();
 
             // Move forward and back or decelerate if neither
@@ -88,7 +86,7 @@ namespace Asteroids
             {
                 Vector2 direction = position;
                 direction.Normalize();
-                bm.AddBullet(position, new Vector2((float)Math.Cos(rotation), (float)Math.Sin(rotation)), rotation, gameTime);
+                bm.AddBullet(position, new Vector2((float)Math.Cos(rotation) * 3, (float)Math.Sin(rotation) * 3), rotation, gameTime);
             }
 
         }
@@ -135,6 +133,18 @@ namespace Asteroids
             {
                 position.Y = 0;
             }
+        }
+
+        /// <summary>
+        /// Resets the game
+        /// </summary>
+        public void Reset()
+        {
+            position = new Vector2(viewport.Width / 2, viewport.Height / 2);
+            speed = 0;
+            rotation = 0;
+            lives = 3;
+            score = 0;
         }
     }
 }
